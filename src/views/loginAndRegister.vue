@@ -26,6 +26,7 @@
                 autocomplete="off"
                 @focus="underline(2)"
                 @blur="underline(2)"
+                v-model.lazy="password"
               />
             </div>
           </form>
@@ -146,13 +147,24 @@ export default {
     login_click() {
       let checkAllLogin = []
       checkAllLogin.push(this.checkLoginEmail(this.email))
-      checkAllLogin.forEach((value) => {
-        value()
+      this.isLoading = checkAllLogin.some((value) => {
+        let istrue = value()
+        return istrue === undefined || istrue
       })
-      startLoading()
+      if (this.password === "") {
+        this.isLoading = false
+        setTimeout(() => {
+          this.$message.error("密码不能为空")
+        })
+      }
+      if (this.isLoading) {
+        startLoading()
+        this.login_submit()
+      }
     },
     async login_submit() {
-      let responeData = await this.$ajax("/api/user", { email: this.email, password: this.password }, "POST")
+      let responeData = await this.$ajax("/user/login", { email: this.email, password: this.password }, "POST")
+      console.log(responeData);
       if (responeData["data"].code === 0) {
         endLoading()
         this.$message({
@@ -167,7 +179,7 @@ export default {
         let pattern = /^([A-Za-z0-9_\-.])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,4})$/
         if (!pattern.test(email)) {
           this.$message.error('请填写正确的邮箱格式')
-          return
+          return false
         }
       }
     },
