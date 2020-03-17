@@ -1,6 +1,44 @@
 import axios from 'axios'
+import { startLoading, endLoading } from '@/utils/loading'
+import Vue from 'vue'
+// import router from '../router'
 axios.defaults.baseURL = 'http://localhost:9000/api/'
-axios.defaults.timeout = 5000
+
+//请求拦截
+axios.interceptors.request.use(
+	config => {
+		startLoading() 
+		if (localStorage.eleToken) {
+			config.headers.Authorization = localStorage.eleToken
+		}
+		return config
+	},
+	error => {
+		return error
+	}
+)
+
+//响应拦截
+axios.interceptors.response.use(
+	response => {
+		endLoading() 
+		return response
+	},
+	error => {
+		endLoading() 
+		const { status } = error.response 
+		
+		console.log(error);
+		if (status === 401) {
+			Vue.prototype.$message({
+				type: 'warning',
+				message: "请重新认证身份"
+			})
+			localStorage.removeItem('element')
+		}
+		return Promise.reject(error)
+	}
+)
 
 export default (url = '', params = {}, type = 'GET') => {
 	let promise
@@ -25,7 +63,7 @@ export default (url = '', params = {}, type = 'GET') => {
 				resolve(response)
 			})
 			.catch(error => {
-                console.log(error);
+				console.log(error)
 				reject(error)
 			})
 	})

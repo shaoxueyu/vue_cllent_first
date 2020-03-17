@@ -115,7 +115,7 @@
 
 <script>
 import tabA from "@/components/tabA"
-import { startLoading, endLoading } from "@/utils/loading"
+import jwt_decode from "jwt-decode"
 export default {
   data() {
     return {
@@ -146,33 +146,51 @@ export default {
   methods: {
     login_click() {
       let checkAllLogin = []
+      let isLoading = true
       checkAllLogin.push(this.checkLoginEmail(this.email))
-      this.isLoading = checkAllLogin.some((value) => {
+      isLoading = !checkAllLogin.some((value) => {
         let istrue = value()
-        return istrue === undefined || istrue
+        return istrue === false
       })
       if (this.password === "") {
-        this.isLoading = false
+        isLoading = false
         setTimeout(() => {
           this.$message.error("密码不能为空")
         })
+        return
       }
-      if (this.isLoading) {
-        startLoading()
-        this.login_submit()
+      if (isLoading) {
+        this.submitLogin()
       }
     },
     async login_submit() {
-      let responeData = await this.$ajax("/user/login", { email: this.email, password: this.password }, "POST")
-      console.log(responeData);
-      if (responeData["data"].code === 0) {
-        endLoading()
+      let responeData = await this.$ajax("/user/login", { email: this.email, password: this.password }, "POST").catch((err) => {
+        console.log(err);
+      })
+      if (!responeData) {
         this.$message({
-          type: "succss",
-          message: responeData["data"].message
+          type: "warn",
+          message: "服务器出现未知错误，请稍后再试"
+        })
+        return
+      }
+      if (responeData["data"].code === 0) {
+        new Promise((resolve) => {
+          this.$message({
+            type: "success",
+            message: responeData["data"].message
+          })
+          setTimeout(resolve, 1000)
+        }).then(() => {
+          let token = responeData["data"].token.split(" ")[1] || responeData["data"].token
+          window.localStorage.setItem("eleToken", token)
+          const decode = jwt_decode(token)
+          console.log(decode);
+          this.$router.push("/index")
+        }).catch((err) => {
+          console.log(err);
         })
       }
-
     },
     checkLoginEmail(email) {
       return () => {
@@ -319,6 +337,7 @@ export default {
   },
   created() {
     this.submitRegister = this.$throttle(this.reg_submit, 1000)
+    this.submitLogin = this.$throttle(this.login_submit, 500)
   },
 }
 </script>
