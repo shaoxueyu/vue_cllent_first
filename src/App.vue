@@ -20,14 +20,17 @@ export default {
     },
     setScreen() {
       let domApp = this.$refs["app"]
-      domApp.style.width = document.documentElement.clientWidth + "px"
-      domApp.style.height = document.documentElement.clientHeight + "px"
+      domApp.style.width = window.innerWidth + "px"
+      domApp.style.height = window.innerHeight + "px"
     }
   },
   mounted() {
     this.adaptiveScreen()
-  },
+  }
 }
 </script>
 <style lang="scss">
+#app{
+  overflow: hidden;
+}
 </style>

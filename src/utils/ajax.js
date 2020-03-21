@@ -28,13 +28,13 @@ axios.interceptors.response.use(
 		endLoading() 
 		const { status } = error.response 
 		
-		console.log(error);
+		/* console.log(error); */
 		if (status === 401) {
 			Vue.prototype.$message({
 				type: 'warning',
 				message: "请重新认证身份"
 			})
-			localStorage.removeItem('element')
+			localStorage.removeItem('eleToken')
 		}
 		return Promise.reject(error)
 	}

@@ -20,6 +20,7 @@
             </div>
             <div :class="['login-register-page',{focus:isFocus2}]">
               <input
+                ref="login_submit"
                 type="password"
                 name="password"
                 placeholder="密码:"
@@ -27,6 +28,7 @@
                 @focus="underline(2)"
                 @blur="underline(2)"
                 v-model.lazy="password"
+                @keyup.enter="login_click"
               />
             </div>
           </form>
@@ -116,6 +118,9 @@
 <script>
 import tabA from "@/components/tabA"
 import jwt_decode from "jwt-decode"
+import { mapActions } from "vuex"
+/* import {MessageBox} from "element-ui" */
+/* import {isEmpty} from "@/utils/isEmpty" */
 export default {
   data() {
     return {
@@ -140,10 +145,13 @@ export default {
       password: "",
     }
   },
+  
   components: {
-    tabA
+    tabA,
   },
+
   methods: {
+    ...mapActions(["set_authenticated", "set_user"]),
     login_click() {
       let checkAllLogin = []
       let isLoading = true
@@ -164,17 +172,21 @@ export default {
       }
     },
     async login_submit() {
+      //防止用户猛击回车
+      this.$refs["login_submit"].blur()
       let responeData = await this.$ajax("/user/login", { email: this.email, password: this.password }, "POST").catch((err) => {
         console.log(err);
       })
       if (!responeData) {
         this.$message({
-          type: "warn",
+          type: "warning",
           message: "服务器出现未知错误，请稍后再试"
         })
         return
       }
-      if (responeData["data"].code === 0) {
+      if (responeData.status === 200) {
+        //密码错误
+        
         new Promise((resolve) => {
           this.$message({
             type: "success",
@@ -182,10 +194,17 @@ export default {
           })
           setTimeout(resolve, 1000)
         }).then(() => {
-          let token = responeData["data"].token.split(" ")[1] || responeData["data"].token
+          //获取token
+          let token = responeData["data"].token && responeData["data"].token.split(" ")[1] || responeData["data"].token
+          //将token存储到localStorage
           window.localStorage.setItem("eleToken", token)
+          //解析token
           const decode = jwt_decode(token)
-          console.log(decode);
+          //放入vuex
+          this.set_authenticated(true)
+          this.set_user(decode)
+
+
           this.$router.push("/index")
         }).catch((err) => {
           console.log(err);
