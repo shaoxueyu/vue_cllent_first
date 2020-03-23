@@ -1,5 +1,5 @@
 <template>
-  <div class=diglog-container>
+  <div class="diglog-container">
     <!-- Form -->
     <el-dialog
       title="添加资金信息"
@@ -31,12 +31,22 @@
             prop="describe"
           >
             <el-input
+              id="describe"
               type="describe"
               label="收支描述"
               v-model="formData.describe"
             >
             </el-input>
-
+          </el-form-item>
+          <el-form-item
+            label="收入："
+            prop="income"
+          >
+            <el-input
+              type="income"
+              v-model="formData.expend"
+              id="income"
+            ></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -78,4 +88,7 @@ export default {
 }
 </script>
 <style lang="scss">
+.diglog-container{
+  user-select: none;
+}
 </style>

@@ -34,3 +34,5 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 -   傻白甜的蓝 #409eff
 -   迷人的红 #f56767
 
+### mark下新发现
+![Image text](public/images/vue-loader.png)
