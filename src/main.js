@@ -58,7 +58,6 @@ packagePlugin(
 	Select,
 	Option
 )
-console.log(App);
 new Vue({
 	router,
 	store,

@@ -10,6 +10,7 @@ export default {
 </script>
 <style lang="scss" socped>
   .right-container{
+    position: relative;
     width: 87vw;
     height: 100%;
   }

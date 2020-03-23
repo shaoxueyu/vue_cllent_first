@@ -2,16 +2,18 @@
   <div class="diglog-container">
     <!-- Form -->
     <el-dialog
-      title="添加资金信息"
+      :title="dialog.title"
       :visible.sync="dialog.show"
       :modal-append-to-body="false"
+      :before-close="dialog.fun"
     >
       <div class="form">
         <el-form
-          v-model="formData"
+          :model="formData"
           ref="form"
           label-width="120px"
           style="margin:10px"
+          :rules="formRules"
         >
           <el-form-item label="收支类型：">
             <el-select
@@ -41,12 +43,59 @@
           <el-form-item
             label="收入："
             prop="income"
+            style="width:300px"
           >
             <el-input
               type="income"
-              v-model="formData.expend"
+              v-model.number="formData.income"
               id="income"
             ></el-input>
+          </el-form-item>
+          <el-form-item
+            label="支出："
+            prop="expend"
+            style="width:300px"
+          >
+            <el-input
+              type="text"
+              v-model.number="formData.expend"
+              id="expend"
+            ></el-input>
+          </el-form-item>
+          <el-form-item
+            label="账户现金："
+            prop="cash"
+            style="width:300px"
+          >
+            <el-input
+              type="text"
+              v-model.number="formData.cash"
+              :readonly="true"
+              :disabled="true"
+              id="cash"
+            ></el-input>
+          </el-form-item>
+          <el-form-item
+            label="备注："
+            prop="remark"
+            style="width: 80%"
+          >
+            <el-input
+              type="textarea"
+              v-model="formData.remark"
+              id="remark"
+            ></el-input>
+          </el-form-item>
+          <el-form-item class="text-right">
+            <el-button @click="dialog.show = false">
+              取消
+            </el-button>
+            <el-button
+              @click="onSubmit('form')"
+              type="primary"
+            >
+              提交
+            </el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -54,18 +103,10 @@
   </div>
 </template>
 <script>
+import axios from "axios"
 export default {
   data() {
     return {
-      formData: {
-        type: "",
-        describe: "",
-        income: "",
-        expend: "",
-        cash: "",
-        remark: "",
-        id: ""
-      },
       formatTypeList: [
         "提现",
         "提现手续费",
@@ -73,22 +114,71 @@ export default {
         "优惠券",
         "充值礼券",
         "转账"
-      ]
+      ],
+      formRules: {
+        describe: [
+          { required: true, message: "收支描述不能为空！", trigger: "blur" }
+        ],
+        income: [
+          { required: true, message: "收入不能为空！", trigger: "blur" },
+          { type: "number", message: "必须为数字", trigger: "blur" }
+
+        ],
+        expend: [
+          { required: true, message: "支出不能为空！", trigger: "blur" },
+          { type: "number", message: "必须为数字", trigger: "blur" }
+        ],
+        /*   cash: [
+            { required: true, message: "账户现金不能为空！", trigger: "blur" },
+            { type: "number", message: "必须为数字", trigger: "blur" }
+          ] */
+      }
     }
   },
-  watch: {
+  methods: {
+    onSubmit(form) {
+      this.$refs[form].validate(valid => {
+        this.validate(valid)
+      })
+    },
+    async validate(valid) {
+      if (valid) {
+        this.formData.cash = this.cash
+        let { status } = await axios.post("/profile/add", this.formData).catch(err => console.log(err)).catch(err => console.log(err))
+        if (status === 200) {
+          this.dialog.show = false
+          this.$message({
+            message: "数据添加成功",
+            type: "success"
+          })
+          let keysArr = [...Object.keys(this.formData)]
+          keysArr.forEach((key) => {
+            this.formData[key] = ""
+          })
+          //通过调用父组件更新
+          this.$emit("update")
+
+        }
+
+      } else {
+        console.log(valid);
+      }
+    }
   },
   props: {
-    dialog: Object
+    dialog: Object,
+    formData: Object
   },
   components: {
   },
   mounted() {
+
   },
 }
 </script>
 <style lang="scss">
-.diglog-container{
-  user-select: none;
+.el-dialog {
+  border-radius: 25px;
+  box-shadow: 0 4px 10px 0 darken(#8a8484, 30%);
 }
 </style>

@@ -30,7 +30,7 @@
 
       </el-table-column>
       <el-table-column
-        prop="data"
+        prop="date"
         label="创建时间"
         width="250"
         align="center"
@@ -103,21 +103,25 @@
             size="small"
             type="warning"
             icon="edit"
-            @click="handleEdit(scope.$index,scope.row)"
+            @click="handleEdit(scope.row)"
           >编辑
           </el-button>
           <el-button
             size="small"
             type="danger"
             icon="delete"
-            @click="handleDelete(scope.$index,scope.row)"
+            @click="handleDelete(scope.row)"
           >删除
           </el-button>
         </template>
       </el-table-column>
 
     </el-table>
-    <Dialog :dialog="dialog" />
+    <Dialog
+      :dialog="dialog"
+      @update="getProfile"
+      :formData="formData"
+    />
   </div>
 </template>
 <script>
@@ -126,9 +130,21 @@ import Dialog from "../components/dialog"
 export default {
   data() {
     return {
+      formData: {
+        type: "",
+        describe: "",
+        income: "",
+        expend: "",
+        remark: "",
+        cash: "",
+        id: "",
+      },
       tableData: [],
       dialog: {
-        show: false
+        show: false, // 控制显示和隐藏
+        title: "",
+        option: "",
+        fun: () => { }
       }
     }
   },
@@ -140,22 +156,66 @@ export default {
         this.tableData = data
       }
     },
-    handleEdit(index, row) {
-      console.log(index, row);
+    handleEdit(row) {
+      this.dialog = {
+        show: true,
+        title: "修改资金信息",
+        option: "edit",
+        fun: (done, formData = this.formData) => { //清空对象
+          let keysArr = [...Object.keys(formData)]
+          keysArr.forEach(keys => {
+            formData[keys] = ""
+          })
+          done()
+        }
+      }
+      this.formData = {
+        type: row.type,
+        describe: row.describe,
+        income: row.income,
+        expend: row.expend,
+        cash: row.cash,
+        remark: row.remark
+      }
     },
     //添加新数据
     handleAdd() {
-      this.dialog.show = true
+      console.log(this.formData);
+      this.dialog = {
+        show: true,
+        title: "添加新数据",
+        option: "add",
+        fun: (done, formData = this.formData) => { //清空对象
+          let keysArr = [...Object.keys(formData)]
+          keysArr.forEach(keys => {
+            if (keys === "cash") formData[keys] = "0"
+            formData[keys] = ""
+          })
+          done()
+        }
+      }
     }
   },
   created() {
     this.getProfile()
   },
-  components:{
+  components: {
     Dialog
   },
+  computed: {
+    cash() {
+      console.log(1);
+      let formData = this.formData
+      return Number(formData.income - formData.expend)
+    }
+  },
+  watch: {
+    cash(newValue) {
+      this.formData.cash = newValue
+    }
+  },
   mounted() {
-  
+
   },
 
 }
