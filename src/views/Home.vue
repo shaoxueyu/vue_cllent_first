@@ -10,18 +10,28 @@
 export default {
   data() {
     return {
-      isAnimate: true
+      isAnimate: false
     }
   },
   methods: {
-    animate() {
-      setTimeout(() => {
-        this.isAnimate = false
-      })
-    }
+
   },
   mounted() {
-    
+    //TODO: 此处为重复代码板块，可优化
+    new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(true)
+      })
+    }).then((bool) => {
+      this.isAnimate = bool
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(false)
+        }, 2500)
+      })
+    }).then((bool) => {
+      this.isAnimate = bool
+    })
   },
 }
 
@@ -62,7 +72,6 @@ export default {
     color: #a8d4fa;
   }
   .lead {
-
     margin-top: 50px;
     font-size: 3vw;
     text-align: center;

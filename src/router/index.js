@@ -8,21 +8,20 @@ Vue.use(VueRouter)
 
 const routes = [
 	{
+		path: '/index',
+		redirect: '/index/home'
+	},
+	{
 		path: '/',
 		redirect: '/index/home'
 	},
 	{
 		path: '/index',
-		name: 'Index',
+		name: 'index',
 		component: Index,
 		children: [
 			{
 				path: 'home',
-				component: Home,
-				name: 'home'
-			},
-			{
-				path: '',
 				component: Home,
 				name: 'home'
 			},
@@ -33,6 +32,24 @@ const routes = [
 						/* webpackChunkName: "Infoshow"*/ '@/views/infoShow'
 					),
 				name: 'infoshow'
+			},
+			{
+				path: 'fundManage',
+				component: () =>
+					import(
+						/* webpackChunkName: "profile"*/ '@/views/fundManage'
+					),
+				name: 'fundManage',
+				children: [
+					{
+						path: 'fundlist',
+						name: 'fundlist',
+						component: () =>
+							import(
+								/* webpackChunkName: "fundlist"*/ '@/views/fundlist'
+							)
+					}
+				]
 			}
 		]
 	},

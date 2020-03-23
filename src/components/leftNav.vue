@@ -26,7 +26,7 @@
             </template>
             <router-link
               v-for="(citem) in item.children"
-              :to="`/index/${citem.path}`"
+              :to="`/index/${item.path}/${citem.path}`"
               :key="citem.path"
               class="menu-link"
             >
@@ -58,9 +58,9 @@ export default {
         {
           icon: "el-icon-s-unfold",
           name: "信息管理",
-          path: "infoManage",
+          path: "infoshow",
           children: [
-            { icon: "el-icon-s-custom", path: "infoshow", name: "个人信息" }
+            { icon: "el-icon-s-custom", path: "", name: "个人信息" }
           ]
         }
 

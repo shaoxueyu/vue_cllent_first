@@ -31,6 +31,7 @@ export default {
 </script>
 <style lang="scss">
 #app{
+  font-family: "sunshineKing";
   overflow: hidden;
 }
 </style>

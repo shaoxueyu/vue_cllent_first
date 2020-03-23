@@ -7,32 +7,32 @@ axios.defaults.baseURL = 'http://localhost:9000/api/'
 //请求拦截
 axios.interceptors.request.use(
 	config => {
-		startLoading() 
+		startLoading()
 		if (localStorage.eleToken) {
-			config.headers.Authorization = localStorage.eleToken
-		}
+			config.headers.Authorization = localStorage.getItem('eleToken')
+		} 
 		return config
 	},
 	error => {
-		return error
+		return Promise.reject(error)
 	}
 )
 
 //响应拦截
 axios.interceptors.response.use(
 	response => {
-		endLoading() 
+		endLoading()
 		return response
 	},
 	error => {
-		endLoading() 
-		const { status } = error.response 
-		
+		endLoading()
+		const { status } = error.response
+
 		/* console.log(error); */
 		if (status === 401) {
 			Vue.prototype.$message({
 				type: 'warning',
-				message: "请重新认证身份"
+				message: '请重新认证身份'
 			})
 			localStorage.removeItem('eleToken')
 		}
@@ -52,7 +52,7 @@ export default (url = '', params = {}, type = 'GET') => {
 			if (paramsStr !== '') {
 				paramsStr = paramsStr.substr(0, paramsStr.lastIndexOf('&'))
 			}
-			url = '?' + paramsStr
+			url += '?' + paramsStr
 			// get 请求
 			promise = axios.get(url)
 		} else if (type === 'POST') {

@@ -11,7 +11,16 @@ import {
 	Menu,
 	Submenu,
 	MenuItem,
-	MenuItemGroup
+	MenuItemGroup,
+	Table,
+	TableColumn,
+	Button,
+	Form,
+	FormItem,
+	Dialog,
+	Input,
+	Select,
+	Option
 } from 'element-ui'
 import packagePlugin from '@/utils/vueUse'
 import App from './App.vue'
@@ -38,9 +47,18 @@ packagePlugin(
 	Menu,
 	MenuItem,
 	Submenu,
-	MenuItemGroup
+	MenuItemGroup,
+	Table,
+	TableColumn,
+	Button,
+	Form,
+	FormItem,
+	Input,
+	Dialog,
+	Select,
+	Option
 )
-
+console.log(App);
 new Vue({
 	router,
 	store,
