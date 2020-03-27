@@ -228,7 +228,7 @@ export default {
       this.power = value
     },
     checkRegname(reg_name) {
-      let pattern = /^[a-zA-Z0-9_-]{4,16}$/
+      let pattern = /^[\u4e00-\u9fa5\w]{1,14}$/
       if (!pattern.test(reg_name)) {
         this.$message.error('姓名格式不正确')
         this.reg_name_error = true

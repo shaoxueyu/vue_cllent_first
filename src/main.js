@@ -20,7 +20,9 @@ import {
 	Dialog,
 	Input,
 	Select,
-	Option
+	Option,
+	Pagination,
+	DatePicker
 } from 'element-ui'
 import packagePlugin from '@/utils/vueUse'
 import App from './App.vue'
@@ -32,6 +34,8 @@ import '../public/css/font.css'
 import '@/assets/css/animate.min.css'
 import debounce from '@/utils/debounce'
 import throttle from '@/utils/throttle'
+/* import list from "@/views/fundlist"
+console.table(list.render); */
 Vue.config.productionTip = false
 Vue.prototype.$message = Message
 Vue.prototype.$debounce = debounce //防抖
@@ -56,7 +60,9 @@ packagePlugin(
 	Input,
 	Dialog,
 	Select,
-	Option
+	Option,
+	Pagination,
+	DatePicker
 )
 new Vue({
 	router,

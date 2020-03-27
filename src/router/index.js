@@ -23,7 +23,8 @@ const routes = [
 			{
 				path: 'home',
 				component: Home,
-				name: 'home'
+				name: 'home',
+				meta: { title: '首页' }
 			},
 			{
 				path: 'infoshow',
@@ -59,7 +60,8 @@ const routes = [
 		component: () =>
 			import(
 				/* webpackChunkName: "LoginAndRegister"*/ '@/views/loginAndRegister'
-			)
+			),
+		meta: { title: '登录' }
 	},
 	{
 		path: '/test',
@@ -80,6 +82,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
 	console.log('进入到了路由守卫')
 	if (to.path === '/login') {
+		document.title = to.meta.title
 		next()
 		return
 	}
@@ -112,6 +115,7 @@ router.beforeEach((to, from, next) => {
 			next('/login')
 			return
 		} else if (parseInt(tokenDecode['exp']) * 1000 >= Date.now()) {
+			document.title = to.meta.title || "后台系统"
 			next()
 			return
 		}

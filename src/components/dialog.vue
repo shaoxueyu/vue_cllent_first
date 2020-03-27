@@ -1,11 +1,15 @@
 <template>
-  <div class="diglog-container">
+  <div
+    class="diglog-container"
+    ref="test"
+  >
     <!-- Form -->
     <el-dialog
       :title="dialog.title"
       :visible.sync="dialog.show"
       :modal-append-to-body="false"
       :before-close="dialog.fun"
+      :destroy-on-close="true"
     >
       <div class="form">
         <el-form
@@ -87,7 +91,7 @@
             ></el-input>
           </el-form-item>
           <el-form-item class="text-right">
-            <el-button @click="dialog.show = false">
+            <el-button @click="cancel">
               取消
             </el-button>
             <el-button
@@ -136,6 +140,10 @@ export default {
     }
   },
   methods: {
+    cancel() {
+      this.dialog.show = false
+      this.$refs["form"].resetFields()  //清空验证条件
+    },
     onSubmit(form) {
       this.$refs[form].validate(valid => {
         this.validate(valid)
@@ -143,12 +151,13 @@ export default {
     },
     async validate(valid) {
       if (valid) {
-        this.formData.cash = this.cash
-        let { status } = await axios.post("/profile/add", this.formData).catch(err => console.log(err)).catch(err => console.log(err))
+        let params = this.dialog.option //具体是添加还是编辑在这判断
+        console.log(params);
+        let { status, data } = await axios.post(`/profile/${params}`, this.formData).catch(err => console.log(err)).catch(err => console.log(err))
         if (status === 200) {
           this.dialog.show = false
           this.$message({
-            message: "数据添加成功",
+            message: data.message,
             type: "success"
           })
           let keysArr = [...Object.keys(this.formData)]
@@ -159,15 +168,13 @@ export default {
           this.$emit("update")
 
         }
-
-      } else {
-        console.log(valid);
       }
     }
   },
   props: {
     dialog: Object,
-    formData: Object
+    formData: Object,
+    sunzi: Function
   },
   components: {
   },

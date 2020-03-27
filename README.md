@@ -41,3 +41,5 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 ### console.table(function)
 
 -   可以打印出整个函数
+
+*   组件中 dialog.fun 和 dialog.fun() 的坑一定要注意，在组件中这是两个不同的概念，mark 已经踩坑

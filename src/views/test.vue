@@ -9,7 +9,7 @@ export default {
   methods: {
   },
   //fuck,element提供的弹窗有毒在切换路由的时候
-  beforeRouteLeave(to, from, next) {
+  /* beforeRouteLeave(to, from, next) {
     if (to.path === "/login") {
       setTimeout(() => {
         this.$confirm("确定要退出登录吗？", "提示", {
@@ -26,6 +26,6 @@ export default {
     } else {
       next()
     }
-  }
+  } */
 }
 </script>
